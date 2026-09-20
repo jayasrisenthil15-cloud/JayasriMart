@@ -1,0 +1,30 @@
+# Maven target directory
+target/
+
+# H2 Database persistent file storage
+data/
+*.mv.db
+*.trace.db
+
+# Sensitive local configuration
+src/main/resources/config.properties
+config.properties
+
+# IDE & Editor files
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.classpath
+.project
+
+# OS generated files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Logs
+*.log
+logs/

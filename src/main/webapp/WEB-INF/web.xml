@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                             https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
+         version="5.0">
+
+    <display-name>JayasriMart</display-name>
+
+    <!-- Application Lifecycle Listener -->
+    <listener>
+        <listener-class>com.jayasrimart.listener.AppContextListener</listener-class>
+    </listener>
+
+    <!-- 1. Request ID & Observability Filter -->
+    <filter>
+        <filter-name>RequestIdFilter</filter-name>
+        <filter-class>com.jayasrimart.filter.RequestIdFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>RequestIdFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- 2. Authentication Filter -->
+    <filter>
+        <filter-name>AuthFilter</filter-name>
+        <filter-class>com.jayasrimart.filter.AuthFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthFilter</filter-name>
+        <url-pattern>/profile/*</url-pattern>
+        <url-pattern>/profile</url-pattern>
+        <url-pattern>/cart/*</url-pattern>
+        <url-pattern>/cart</url-pattern>
+        <url-pattern>/checkout/*</url-pattern>
+        <url-pattern>/checkout</url-pattern>
+        <url-pattern>/orders/*</url-pattern>
+        <url-pattern>/orders</url-pattern>
+        <url-pattern>/buyer/*</url-pattern>
+        <url-pattern>/seller/*</url-pattern>
+        <url-pattern>/admin/*</url-pattern>
+    </filter-mapping>
+
+    <!-- 3. Role-Based Access Control Filter -->
+    <filter>
+        <filter-name>RoleFilter</filter-name>
+        <filter-class>com.jayasrimart.filter.RoleFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>RoleFilter</filter-name>
+        <url-pattern>/buyer/*</url-pattern>
+        <url-pattern>/seller/*</url-pattern>
+        <url-pattern>/admin/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Health Check Servlet -->
+    <servlet>
+        <servlet-name>HealthServlet</servlet-name>
+        <servlet-class>com.jayasrimart.controller.HealthServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>HealthServlet</servlet-name>
+        <url-pattern>/api/v1/health</url-pattern>
+    </servlet-mapping>
+
+    <!-- Session Configuration: 30 Minutes Inactivity Timeout -->
+    <session-config>
+        <session-timeout>30</session-timeout>
+        <cookie-config>
+            <http-only>true</http-only>
+            <secure>false</secure>
+        </cookie-config>
+        <tracking-mode>COOKIE</tracking-mode>
+    </session-config>
+
+    <!-- Welcome File List -->
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <!-- Custom Error Pages: Never expose stack traces -->
+    <error-page>
+        <error-code>403</error-code>
+        <location>/WEB-INF/views/error/403.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/WEB-INF/views/error/404.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/WEB-INF/views/error/500.jsp</location>
+    </error-page>
+    <error-page>
+        <exception-type>java.lang.Throwable</exception-type>
+        <location>/WEB-INF/views/error/500.jsp</location>
+    </error-page>
+
+</web-app>

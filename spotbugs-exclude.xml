@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <!-- Exclude internal representation exposure for DTOs and Domain Models -->
+    <Match>
+        <Package name="~com\.jayasrimart\.(dto|model).*"/>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- Exclude DBUtil managed DataSource singleton references -->
+    <Match>
+        <Class name="com.jayasrimart.util.DBUtil"/>
+        <Bug pattern="MS_EXPOSE_REP,EI_EXPOSE_STATIC_REP2"/>
+    </Match>
+
+    <!-- Exclude AppContextListener schema script file execution and top-level bootstrap catch -->
+    <Match>
+        <Class name="com.jayasrimart.listener.AppContextListener"/>
+        <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE,REC_CATCH_EXCEPTION"/>
+    </Match>
+</FindBugsFilter>
