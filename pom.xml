@@ -18,7 +18,8 @@
         <maven.compiler.release>17</maven.compiler.release>
         <jakarta.servlet.version>5.0.0</jakarta.servlet.version>
         <jakarta.jsp.version>3.0.0</jakarta.jsp.version>
-        <jakarta.jstl.version>2.0.0</jakarta.jstl.version>
+        <jakarta.jstl.api.version>3.0.0</jakarta.jstl.api.version>
+        <jakarta.jstl.impl.version>3.0.1</jakarta.jstl.impl.version>
         <hikaricp.version>5.1.0</hikaricp.version>
         <h2.version>2.2.224</h2.version>
         <jbcrypt.version>0.4</jbcrypt.version>
@@ -46,19 +47,19 @@
             <groupId>jakarta.servlet.jsp</groupId>
             <artifactId>jakarta.servlet.jsp-api</artifactId>
             <version>${jakarta.jsp.version}</version>
-            <scope>provided</scope>
+           <scope>provided</scope>  
         </dependency>
 
-        <!-- Jakarta JSTL 2.0 API and GlassFish Implementation -->
+        <!-- Jakarta JSTL API and GlassFish Implementation -->
         <dependency>
             <groupId>jakarta.servlet.jsp.jstl</groupId>
             <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
-            <version>${jakarta.jstl.version}</version>
+            <version>${jakarta.jstl.api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.web</groupId>
             <artifactId>jakarta.servlet.jsp.jstl</artifactId>
-            <version>${jakarta.jstl.version}</version>
+            <version>${jakarta.jstl.impl.version}</version>
         </dependency>
 
         <!-- Connection Pooling: HikariCP -->
@@ -161,6 +162,19 @@
                         <port>8080</port>
                     </httpConnector>
                 </configuration>
+                <!-- Added JSTL dependency inside plugin to fix JasperException -->
+                <dependencies>
+                    <dependency>
+                        <groupId>jakarta.servlet.jsp.jstl</groupId>
+                        <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+                        <version>${jakarta.jstl.api.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.glassfish.web</groupId>
+                        <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+                        <version>${jakarta.jstl.impl.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
 
             <!-- Checkstyle Plugin -->
