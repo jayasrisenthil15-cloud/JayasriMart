@@ -1,3 +1,8 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+
 <c:set var="pageTitle" value="JayasriMart - Multi-Seller E-Commerce Marketplace" scope="request" />
 <jsp:include page="/WEB-INF/views/common/header.jsp" />
 
@@ -17,13 +22,68 @@
     <a href="${pageContext.request.contextPath}/products" class="btn btn-outline btn-sm">View All &rarr;</a>
 </div>
 
-<div class="category-chips">
+<div class="category-chips mb-4">
     <c:forEach var="cat" items="${featuredCategories}">
         <a href="${pageContext.request.contextPath}/products?category=${cat}" class="category-chip">
             <c:out value="${cat}" />
         </a>
     </c:forEach>
 </div>
+
+<%-- Featured Products Showcase --%>
+<c:if test="${not empty featuredProducts}">
+    <div class="section-heading mt-4">
+        <h2 class="section-title">Featured Top-Rated Products</h2>
+        <a href="${pageContext.request.contextPath}/products" class="btn btn-outline btn-sm">View Full Catalog &rarr;</a>
+    </div>
+
+    <div class="product-grid mb-5">
+        <c:forEach var="p" items="${featuredProducts}">
+            <div class="product-card">
+                <div class="product-card-img-wrap">
+                    <c:choose>
+                        <c:when test="${not empty p.imageUrl}">
+                            <img src="<c:out value='${p.imageUrl}' />" alt="<c:out value='${p.name}' />"
+                                 class="product-card-img" loading="lazy"
+                                 onerror="this.src='https://placehold.co/600x400?text=JayasriMart';">
+                        </c:when>
+                        <c:otherwise>
+                            <div class="product-card-placeholder">📦 No Image Available</div>
+                        </c:otherwise>
+                    </c:choose>
+                    <span class="product-card-category"><c:out value="${p.category}" /></span>
+                </div>
+
+                <div class="product-card-body">
+                    <h3 class="product-card-title">
+                        <a href="${pageContext.request.contextPath}/product?id=${p.id}">
+                            <c:out value="${p.name}" />
+                        </a>
+                    </h3>
+
+                    <div class="product-card-meta">
+                        <span class="seller-name">by <c:out value="${not empty p.sellerName ? p.sellerName : 'Merchant'}" /></span>
+                        <span class="product-rating">
+                            ★ <fmt:formatNumber value="${p.avgRating}" pattern="0.0" />
+                        </span>
+                    </div>
+
+                    <div class="product-card-footer">
+                        <div>
+                            <div class="product-price">
+                                ₹<fmt:formatNumber value="${p.price}" pattern="#,##0.00" />
+                            </div>
+                            <span class="stock-tag in-stock">${p.stockQty} in stock</span>
+                        </div>
+                        <a href="${pageContext.request.contextPath}/product?id=${p.id}" class="btn btn-primary btn-sm">
+                            View
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </c:forEach>
+    </div>
+</c:if>
 
 <div class="section-heading mt-4">
     <h2 class="section-title">Why Choose JayasriMart</h2>
