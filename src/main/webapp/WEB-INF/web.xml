@@ -37,6 +37,8 @@
         <url-pattern>/checkout</url-pattern>
         <url-pattern>/orders/*</url-pattern>
         <url-pattern>/orders</url-pattern>
+        <url-pattern>/reviews/*</url-pattern>
+        <url-pattern>/reviews</url-pattern>
         <url-pattern>/buyer/*</url-pattern>
         <url-pattern>/seller/*</url-pattern>
         <url-pattern>/admin/*</url-pattern>

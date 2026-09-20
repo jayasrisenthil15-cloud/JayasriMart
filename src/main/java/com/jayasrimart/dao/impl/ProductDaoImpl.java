@@ -68,6 +68,15 @@ public class ProductDaoImpl implements ProductDAO {
     private static final String SQL_COUNT_ALL =
             "SELECT COUNT(*) AS total FROM products";
 
+    private static final String SQL_COUNT_BY_SELLER =
+            "SELECT COUNT(*) AS total FROM products WHERE seller_id = ?";
+
+    private static final String SQL_COUNT_LOW_STOCK_BY_SELLER =
+            "SELECT COUNT(*) AS total FROM products WHERE seller_id = ? AND stock_qty <= ? AND active = TRUE";
+
+    private static final String SQL_FIND_LOW_STOCK_BY_SELLER =
+            BASE_SELECT + "WHERE p.seller_id = ? AND p.stock_qty <= ? AND p.active = TRUE ORDER BY p.stock_qty ASC";
+
     @Override
     public Optional<Product> findById(Long id) {
         if (id == null) {
@@ -413,6 +422,69 @@ public class ProductDaoImpl implements ProductDAO {
             throw new AppException("Failed to count all products", e);
         }
         return 0;
+    }
+
+    @Override
+    public int countBySellerId(Long sellerId) {
+        if (sellerId == null) {
+            return 0;
+        }
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_COUNT_BY_SELLER)) {
+            ps.setLong(1, sellerId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("total");
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Database error counting products for seller {}: {}", sellerId, e.getMessage(), e);
+            throw new AppException("Failed to count seller products", e);
+        }
+        return 0;
+    }
+
+    @Override
+    public int countLowStockBySellerId(Long sellerId, int threshold) {
+        if (sellerId == null) {
+            return 0;
+        }
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_COUNT_LOW_STOCK_BY_SELLER)) {
+            ps.setLong(1, sellerId);
+            ps.setInt(2, threshold);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("total");
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Database error counting low stock for seller {}: {}", sellerId, e.getMessage(), e);
+            throw new AppException("Failed to count low stock products", e);
+        }
+        return 0;
+    }
+
+    @Override
+    public List<Product> findLowStockBySellerId(Long sellerId, int threshold) {
+        List<Product> products = new ArrayList<>();
+        if (sellerId == null) {
+            return products;
+        }
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_FIND_LOW_STOCK_BY_SELLER)) {
+            ps.setLong(1, sellerId);
+            ps.setInt(2, threshold);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    products.add(mapRow(rs));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Database error finding low stock products for seller {}: {}", sellerId, e.getMessage(), e);
+            throw new AppException("Failed to retrieve low stock products", e);
+        }
+        return products;
     }
 
     private Product mapRow(ResultSet rs) throws SQLException {

@@ -147,8 +147,9 @@
                         <%-- Review Button if DELIVERED --%>
                         <c:if test="${order.status == 'DELIVERED'}">
                             <div class="mt-2">
-                                <a href="${pageContext.request.contextPath}/product?id=${item.productId}#reviews" class="btn btn-outline btn-sm" style="font-size: 0.8rem; color: var(--primary);">
-                                    ✍️ Write Review
+                                <a href="${pageContext.request.contextPath}/reviews/new?orderId=${order.id}&productId=${item.productId}"
+                                   class="btn btn-primary btn-sm" style="font-size: 0.8rem;">
+                                    ✍️ Rate & Review
                                 </a>
                             </div>
                         </c:if>

@@ -4,6 +4,7 @@ import com.jayasrimart.model.Order;
 import com.jayasrimart.model.OrderItem;
 import com.jayasrimart.model.OrderStatus;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
@@ -102,4 +103,12 @@ public interface OrderDAO {
      * @return total count
      */
     int countBySellerId(Long sellerId);
+
+    /**
+     * Calculates total revenue generated from items sold by a specific seller (excluding cancelled orders).
+     *
+     * @param sellerId the seller's user ID
+     * @return total revenue amount
+     */
+    BigDecimal calculateRevenueBySellerId(Long sellerId);
 }

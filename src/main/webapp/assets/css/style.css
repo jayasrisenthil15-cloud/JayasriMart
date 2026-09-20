@@ -1253,3 +1253,151 @@ a:hover {
     background-color: var(--primary);
 }
 
+/* --------------------------------------------------------------------------
+   Star Rating Selector (Review Form)
+   -------------------------------------------------------------------------- */
+.star-rating-selector {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.star-label {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.star-label input[type="radio"] {
+    display: none;
+}
+
+.star-text {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text-main);
+    transition: all 0.15s ease;
+}
+
+.star-label input[type="radio"]:checked + .star-text {
+    background-color: #fef3c7;
+    border-color: #f59e0b;
+    color: #b45309;
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+}
+
+.star-text:hover {
+    border-color: #f59e0b;
+}
+
+/* --------------------------------------------------------------------------
+   Seller & Admin Data Tables and Dashboard Styles
+   -------------------------------------------------------------------------- */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.925rem;
+}
+
+.data-table th {
+    padding: 0.85rem 1rem;
+    background-color: #f8fafc;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.data-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+.data-table tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.metric-card {
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.font-sm {
+    font-size: 0.85rem;
+}
+
+.font-semibold {
+    font-weight: 600;
+}
+
+.text-uppercase {
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.mt-1 { margin-top: 0.25rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-3 { margin-top: 1rem; }
+.mt-4 { margin-top: 1.5rem; }
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 992px) {
+    .grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .grid-3 {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .grid-4, .grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+

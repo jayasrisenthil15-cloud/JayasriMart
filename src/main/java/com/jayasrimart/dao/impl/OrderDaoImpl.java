@@ -9,6 +9,7 @@ import com.jayasrimart.util.DBUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -85,6 +86,12 @@ public class OrderDaoImpl implements OrderDAO {
 
     private static final String SQL_COUNT_BY_SELLER_ID =
             "SELECT COUNT(DISTINCT o.id) AS total FROM orders o JOIN order_items oi ON o.id = oi.order_id WHERE oi.seller_id = ?";
+
+    private static final String SQL_CALCULATE_REVENUE_BY_SELLER =
+            "SELECT COALESCE(SUM(oi.quantity * oi.unit_price), 0.00) AS total_revenue "
+            + "FROM order_items oi "
+            + "JOIN orders o ON oi.order_id = o.id "
+            + "WHERE oi.seller_id = ? AND o.status != 'CANCELLED'";
 
     @Override
     public Order create(Order order, Connection conn) {
@@ -314,6 +321,27 @@ public class OrderDaoImpl implements OrderDAO {
             throw new AppException("Failed to count seller orders", e);
         }
         return 0;
+    }
+
+    @Override
+    public BigDecimal calculateRevenueBySellerId(Long sellerId) {
+        if (sellerId == null) {
+            return BigDecimal.ZERO;
+        }
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_CALCULATE_REVENUE_BY_SELLER)) {
+            ps.setLong(1, sellerId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    BigDecimal total = rs.getBigDecimal("total_revenue");
+                    return total != null ? total : BigDecimal.ZERO;
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Database error calculating seller revenue for {}: {}", sellerId, e.getMessage(), e);
+            throw new AppException("Failed to calculate seller revenue", e);
+        }
+        return BigDecimal.ZERO;
     }
 
     private List<OrderItem> findItemsByOrderId(Long orderId, Connection conn) {

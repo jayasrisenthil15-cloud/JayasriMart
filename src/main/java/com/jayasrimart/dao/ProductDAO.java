@@ -129,4 +129,30 @@ public interface ProductDAO {
      * @return total product count
      */
     int countAll();
+
+    /**
+     * Counts the total number of products listed by a specific seller.
+     *
+     * @param sellerId the seller's user ID
+     * @return total product count for the seller
+     */
+    int countBySellerId(Long sellerId);
+
+    /**
+     * Counts products with stock quantity below or equal to a specified threshold for a seller.
+     *
+     * @param sellerId the seller's user ID
+     * @param threshold the low stock threshold (inclusive)
+     * @return count of low stock products
+     */
+    int countLowStockBySellerId(Long sellerId, int threshold);
+
+    /**
+     * Retrieves products with stock quantity below or equal to a specified threshold for a seller.
+     *
+     * @param sellerId the seller's user ID
+     * @param threshold the low stock threshold (inclusive)
+     * @return list of low stock products
+     */
+    List<Product> findLowStockBySellerId(Long sellerId, int threshold);
 }
