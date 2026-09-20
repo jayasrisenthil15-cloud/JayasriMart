@@ -370,6 +370,22 @@ public class ProductDaoImpl implements ProductDAO {
     }
 
     @Override
+    public boolean restock(Long productId, int quantity, Connection conn) {
+        if (productId == null || quantity <= 0) {
+            return false;
+        }
+        String sql = "UPDATE products SET stock_qty = stock_qty + ? WHERE id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, quantity);
+            ps.setLong(2, productId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            LOGGER.error("Database error restocking product {}: {}", productId, e.getMessage(), e);
+            throw new AppException("Failed to restock product", e);
+        }
+    }
+
+    @Override
     public boolean updateAvgRating(Long productId, BigDecimal newAvgRating, Connection conn) {
         if (productId == null) {
             return false;

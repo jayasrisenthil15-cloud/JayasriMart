@@ -97,11 +97,21 @@ public interface ProductDAO {
      * Updates the stock quantity of a product inside an existing transaction connection.
      *
      * @param productId the product ID
-     * @param quantityDelta quantity to subtract (positive for checkout reduction, negative for restock)
+     * @param quantityDelta quantity to subtract (positive for checkout reduction)
      * @param conn the active transaction Connection
      * @return true if updated successfully and stock remained non-negative
      */
     boolean updateStock(Long productId, int quantityDelta, Connection conn);
+
+    /**
+     * Increases product stock quantity (e.g. upon order cancellation) inside a transaction connection.
+     *
+     * @param productId the product ID
+     * @param quantity quantity to add back
+     * @param conn the active transaction Connection
+     * @return true if restocked successfully
+     */
+    boolean restock(Long productId, int quantity, Connection conn);
 
     /**
      * Updates the average rating of a product inside an existing transaction connection.
