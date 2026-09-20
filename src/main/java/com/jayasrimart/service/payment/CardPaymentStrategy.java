@@ -35,7 +35,7 @@ public class CardPaymentStrategy implements PaymentStrategy {
             throw new ValidationException("cardCvv", "Please provide a valid 3 or 4 digit CVV.");
         }
 
-        String txnId = "CARD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        String txnId = "CARD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase(java.util.Locale.ROOT);
         return PaymentResult.success(txnId, "Card payment simulation approved.");
     }
 }

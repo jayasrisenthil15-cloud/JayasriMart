@@ -23,7 +23,7 @@ public class UpiPaymentStrategy implements PaymentStrategy {
             throw new ValidationException("upiId", "Please provide a valid UPI ID (e.g. name@okhdfcbank, user@upi).");
         }
 
-        String txnId = "UPI-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        String txnId = "UPI-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase(java.util.Locale.ROOT);
         return PaymentResult.success(txnId, "UPI payment simulation approved.");
     }
 }

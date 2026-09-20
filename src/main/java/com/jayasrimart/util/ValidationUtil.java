@@ -49,7 +49,7 @@ public final class ValidationUtil {
      * @throws ValidationException if invalid
      */
     public static String validateEmail(String email) {
-        String trimmed = requireNonBlank(email, "email").toLowerCase();
+        String trimmed = requireNonBlank(email, "email").toLowerCase(java.util.Locale.ROOT);
         if (!EMAIL_PATTERN.matcher(trimmed).matches()) {
             throw new ValidationException("email", "Please enter a valid email address.");
         }

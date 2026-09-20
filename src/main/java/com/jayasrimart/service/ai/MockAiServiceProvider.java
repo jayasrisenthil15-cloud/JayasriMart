@@ -36,25 +36,27 @@ public class MockAiServiceProvider implements AiServiceProvider {
             }
         }
 
-        // 1. Delivery & Shipping Policies
-        if (lower.contains("delivery") || lower.contains("shipping") || lower.contains("charge") || lower.contains("fee")) {
-            return new ChatResponseDTO(
-                    "🚚 **Shipping Policy at JayasriMart:**\n"
-                    + "- **Free Delivery** on orders of ₹999.00 and above!\n"
-                    + "- Standard flat delivery fee of **₹50.00** on orders below ₹999.00.\n"
-                    + "- Fast simulated express dispatch within 2-4 business days across India.",
-                    suggestions
-            );
-        }
-
-        // 2. Payment Methods
-        if (lower.contains("payment") || lower.contains("pay") || lower.contains("upi") || lower.contains("card") || lower.contains("cod")) {
+        // 1. Payment Methods
+        if (lower.contains("payment") || lower.contains("pay") || lower.contains("upi") || lower.contains("card")
+                || lower.contains("cod") || lower.contains("cash on delivery")) {
             return new ChatResponseDTO(
                     "💳 **Accepted Payment Methods:**\n"
                     + "1. **UPI** (Google Pay, PhonePe, Paytm with instant mock verification)\n"
                     + "2. **Credit / Debit Cards** (Visa, MasterCard, RuPay)\n"
                     + "3. **Cash on Delivery (COD)** with zero upfront payment.\n\n"
                     + "All simulated transactions are 100% secure and encrypted!",
+                    suggestions
+            );
+        }
+
+        // 2. Delivery & Shipping Policies
+        if (lower.contains("shipping") || lower.contains("delivery") || lower.contains("dispatch")
+                || lower.contains("courier") || lower.contains("charge") || lower.contains("fee")) {
+            return new ChatResponseDTO(
+                    "🚚 **Shipping Policy at JayasriMart:**\n"
+                    + "- **Free Delivery** on orders of ₹999.00 and above!\n"
+                    + "- Standard flat delivery fee of **₹50.00** on orders below ₹999.00.\n"
+                    + "- Fast simulated express dispatch within 2-4 business days across India.",
                     suggestions
             );
         }
