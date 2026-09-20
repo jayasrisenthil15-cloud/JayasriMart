@@ -111,4 +111,11 @@ public interface OrderDAO {
      * @return total revenue amount
      */
     BigDecimal calculateRevenueBySellerId(Long sellerId);
+
+    /**
+     * Calculates platform-wide Gross Merchandise Value / total revenue (excluding cancelled orders).
+     *
+     * @return platform total revenue amount
+     */
+    BigDecimal calculateTotalRevenue();
 }

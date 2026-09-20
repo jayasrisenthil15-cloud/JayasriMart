@@ -93,6 +93,9 @@ public class OrderDaoImpl implements OrderDAO {
             + "JOIN orders o ON oi.order_id = o.id "
             + "WHERE oi.seller_id = ? AND o.status != 'CANCELLED'";
 
+    private static final String SQL_CALCULATE_TOTAL_REVENUE =
+            "SELECT COALESCE(SUM(total_amount), 0.00) AS gmv FROM orders WHERE status != 'CANCELLED'";
+
     @Override
     public Order create(Order order, Connection conn) {
         if (order == null) {
@@ -340,6 +343,22 @@ public class OrderDaoImpl implements OrderDAO {
         } catch (SQLException e) {
             LOGGER.error("Database error calculating seller revenue for {}: {}", sellerId, e.getMessage(), e);
             throw new AppException("Failed to calculate seller revenue", e);
+        }
+        return BigDecimal.ZERO;
+    }
+
+    @Override
+    public BigDecimal calculateTotalRevenue() {
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_CALCULATE_TOTAL_REVENUE);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                BigDecimal gmv = rs.getBigDecimal("gmv");
+                return gmv != null ? gmv : BigDecimal.ZERO;
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Database error calculating total platform revenue: {}", e.getMessage(), e);
+            throw new AppException("Failed to calculate total platform revenue", e);
         }
         return BigDecimal.ZERO;
     }

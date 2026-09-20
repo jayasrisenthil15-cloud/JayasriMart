@@ -80,4 +80,13 @@ public interface UserDAO {
      * @return total user count
      */
     int countAll();
+
+    /**
+     * Updates the role of a specified user.
+     *
+     * @param userId the user ID
+     * @param role the new role
+     * @return true if updated, false otherwise
+     */
+    boolean updateRole(Long userId, Role role);
 }

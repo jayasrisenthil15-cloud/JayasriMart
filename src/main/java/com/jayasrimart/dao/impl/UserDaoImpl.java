@@ -41,6 +41,9 @@ public class UserDaoImpl implements UserDAO {
     private static final String SQL_UPDATE =
             "UPDATE users SET name = ?, email = ?, password_hash = ?, role = ? WHERE id = ?";
 
+    private static final String SQL_UPDATE_ROLE =
+            "UPDATE users SET role = ? WHERE id = ?";
+
     private static final String SQL_FIND_ALL =
             "SELECT id, name, email, password_hash, role, created_at FROM users ORDER BY id ASC";
 
@@ -234,6 +237,22 @@ public class UserDaoImpl implements UserDAO {
             throw new AppException("Failed to count all users", e);
         }
         return 0;
+    }
+
+    @Override
+    public boolean updateRole(Long userId, Role role) {
+        if (userId == null || role == null) {
+            return false;
+        }
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_UPDATE_ROLE)) {
+            ps.setString(1, role.name());
+            ps.setLong(2, userId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            LOGGER.error("Database error updating role for user {}: {}", userId, e.getMessage(), e);
+            throw new AppException("Failed to update user role", e);
+        }
     }
 
     private User mapRow(ResultSet rs) throws SQLException {
