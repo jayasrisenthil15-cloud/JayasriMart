@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -44,16 +43,23 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("Successful login returns UserResponseDTO without password hash")
+    @DisplayName("Login succeeds with valid credentials")
     void testLoginSuccess() {
-        String email = "buyer@test.com";
-        String plainPassword = "SecretPassword123";
-        String hash = PasswordUtil.hash(plainPassword);
+        String email = "buyer1@jayasrimart.com";
+        String rawPassword = "Buyer@123";
+        String passwordHash = PasswordUtil.hash(rawPassword);
 
-        User mockUser = new User(10L, "Test Buyer", email, hash, Role.BUYER, new Timestamp(System.currentTimeMillis()));
+        User mockUser = new User();
+        mockUser.setId(10L);
+        mockUser.setName("Test Buyer");
+        mockUser.setEmail(email);
+        mockUser.setPasswordHash(passwordHash);
+        mockUser.setRole(Role.BUYER);
+        mockUser.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+
         when(userDAO.findByEmail(email)).thenReturn(Optional.of(mockUser));
 
-        UserLoginRequest request = new UserLoginRequest(email, plainPassword);
+        UserLoginRequest request = new UserLoginRequest(email, rawPassword);
         UserResponseDTO response = authService.login(request);
 
         assertNotNull(response);
@@ -64,83 +70,110 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("Login with invalid password throws AuthenticationException")
-    void testLoginInvalidPassword() {
-        String email = "buyer@test.com";
-        String hash = PasswordUtil.hash("CorrectPassword");
+    @DisplayName("Login fails with invalid password")
+    void testLoginWrongPassword() {
+        String email = "buyer1@jayasrimart.com";
+        String correctPassword = "Buyer@123";
+        String passwordHash = PasswordUtil.hash(correctPassword);
 
-        User mockUser = new User(10L, "Test Buyer", email, hash, Role.BUYER, new Timestamp(System.currentTimeMillis()));
+        User mockUser = new User();
+        mockUser.setId(10L);
+        mockUser.setName("Test Buyer");
+        mockUser.setEmail(email);
+        mockUser.setPasswordHash(passwordHash);
+        mockUser.setRole(Role.BUYER);
+
         when(userDAO.findByEmail(email)).thenReturn(Optional.of(mockUser));
 
-        UserLoginRequest request = new UserLoginRequest(email, "WrongPassword");
+        UserLoginRequest request = new UserLoginRequest(email, "WrongPassword@999");
         assertThrows(AuthenticationException.class, () -> authService.login(request));
     }
 
     @Test
-    @DisplayName("Login with non-existent email throws AuthenticationException")
+    @DisplayName("Login fails when user email does not exist")
     void testLoginUserNotFound() {
-        when(userDAO.findByEmail(anyString())).thenReturn(Optional.empty());
+        String email = "nonexistent@jayasrimart.com";
+        when(userDAO.findByEmail(email)).thenReturn(Optional.empty());
 
-        UserLoginRequest request = new UserLoginRequest("unknown@test.com", "Password123");
+        UserLoginRequest request = new UserLoginRequest(email, "Password@123");
         assertThrows(AuthenticationException.class, () -> authService.login(request));
     }
 
     @Test
-    @DisplayName("Successful registration for Buyer creates user and returns DTO")
-    void testRegisterBuyerSuccess() {
+    @DisplayName("Registration succeeds for valid buyer request")
+    void testRegisterSuccess() {
+        String email = "newuser@example.com";
         UserRegisterRequest request = new UserRegisterRequest(
-                "Jane Doe", "jane@example.com", "SecurePass123", "SecurePass123", Role.BUYER
+                "New User",
+                email,
+                "Password@123",
+                "Password@123",
+                Role.BUYER
         );
 
-        when(userDAO.existsByEmail("jane@example.com")).thenReturn(false);
+        when(userDAO.existsByEmail(email)).thenReturn(false);
         when(userDAO.create(any(User.class))).thenAnswer(invocation -> {
             User u = invocation.getArgument(0);
-            u.setId(99L);
+            u.setId(101L);
             u.setCreatedAt(new Timestamp(System.currentTimeMillis()));
             return u;
         });
 
         UserResponseDTO response = authService.register(request);
-        assertNotNull(response);
-        assertEquals(99L, response.getId());
-        assertEquals("Jane Doe", response.getName());
-        assertEquals("jane@example.com", response.getEmail());
-        assertEquals(Role.BUYER, response.getRole());
 
+        assertNotNull(response);
+        assertEquals(101L, response.getId());
+        assertEquals("New User", response.getName());
+        assertEquals(email, response.getEmail());
+        assertEquals(Role.BUYER, response.getRole());
         verify(userDAO).create(any(User.class));
     }
 
     @Test
-    @DisplayName("Registering with ADMIN role throws ValidationException")
-    void testRegisterAdminRejected() {
-        UserRegisterRequest request = new UserRegisterRequest(
-                "Admin Wannabe", "fakeadmin@test.com", "Pass1234", "Pass1234", Role.ADMIN
-        );
-
-        assertThrows(ValidationException.class, () -> authService.register(request));
-        verify(userDAO, never()).create(any(User.class));
-    }
-
-    @Test
-    @DisplayName("Registration with duplicate email throws DuplicateResourceException")
+    @DisplayName("Registration rejects duplicate email addresses")
     void testRegisterDuplicateEmail() {
+        String email = "existing@example.com";
         UserRegisterRequest request = new UserRegisterRequest(
-                "Jane Doe", "existing@example.com", "SecurePass123", "SecurePass123", Role.BUYER
+                "Existing User",
+                email,
+                "Password@123",
+                "Password@123",
+                Role.BUYER
         );
 
-        when(userDAO.existsByEmail("existing@example.com")).thenReturn(true);
+        when(userDAO.existsByEmail(email)).thenReturn(true);
 
         assertThrows(DuplicateResourceException.class, () -> authService.register(request));
         verify(userDAO, never()).create(any(User.class));
     }
 
     @Test
-    @DisplayName("Registration with password mismatch throws ValidationException")
-    void testRegisterPasswordMismatch() {
+    @DisplayName("Registration prohibits public registration with ADMIN role")
+    void testRegisterProhibitsAdminRole() {
         UserRegisterRequest request = new UserRegisterRequest(
-                "Jane Doe", "jane@example.com", "Password1", "Password2", Role.BUYER
+                "Hacker Admin",
+                "hacker@example.com",
+                "Password@123",
+                "Password@123",
+                Role.ADMIN
         );
 
         assertThrows(ValidationException.class, () -> authService.register(request));
+        verify(userDAO, never()).create(any(User.class));
+    }
+
+    @Test
+    @DisplayName("Registration rejects mismatched password confirmation")
+    void testRegisterPasswordMismatch() {
+        UserRegisterRequest request = new UserRegisterRequest(
+                "User Name",
+                "user@example.com",
+                "Password@123",
+                "DifferentPassword@123",
+                Role.BUYER
+        );
+
+        assertThrows(ValidationException.class, () -> authService.register(request));
+        verify(userDAO, never()).create(any(User.class));
     }
 }
