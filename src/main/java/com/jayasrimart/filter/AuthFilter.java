@@ -26,6 +26,8 @@ import java.nio.charset.StandardCharsets;
         "/cart/*",
         "/checkout/*",
         "/orders/*",
+        "/wishlist/*",
+        "/wishlist",
         "/reviews/*",
         "/reviews",
         "/buyer/*",

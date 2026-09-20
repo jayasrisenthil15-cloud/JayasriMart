@@ -33,13 +33,19 @@
                     <%-- 2. Buyer Navigation --%>
                     <c:when test="${sessionScope.currentUser.buyer}">
                         <a href="${pageContext.request.contextPath}/products" class="nav-link">Catalog</a>
-                        <a href="${pageContext.request.contextPath}/orders" class="nav-link">My Orders</a>
+                        <a href="${pageContext.request.contextPath}/wishlist" class="nav-link">
+                            Wishlist
+                            <c:if test="${not empty sessionScope.wishlistCount && sessionScope.wishlistCount > 0}">
+                                <span class="badge badge-buyer"><c:out value="${sessionScope.wishlistCount}" /></span>
+                            </c:if>
+                        </a>
                         <a href="${pageContext.request.contextPath}/cart" class="nav-link">
                             Cart
                             <c:if test="${not empty sessionScope.cartCount && sessionScope.cartCount > 0}">
                                 <span class="badge badge-buyer"><c:out value="${sessionScope.cartCount}" /></span>
                             </c:if>
                         </a>
+                        <a href="${pageContext.request.contextPath}/orders" class="nav-link">My Orders</a>
                         <a href="${pageContext.request.contextPath}/profile" class="nav-link">Profile</a>
                         <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline btn-sm">Sign Out</a>
                     </c:when>
@@ -84,6 +90,7 @@
                 </c:when>
                 <c:when test="${sessionScope.currentUser.buyer}">
                     <a href="${pageContext.request.contextPath}/products" class="nav-link">Catalog</a>
+                    <a href="${pageContext.request.contextPath}/wishlist" class="nav-link">Wishlist</a>
                     <a href="${pageContext.request.contextPath}/cart" class="nav-link">Cart</a>
                     <a href="${pageContext.request.contextPath}/orders" class="nav-link">My Orders</a>
                     <a href="${pageContext.request.contextPath}/profile" class="nav-link">Profile</a>

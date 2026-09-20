@@ -89,12 +89,21 @@
                         </div>
                     </div>
 
-                    <div class="purchase-actions">
+                    <div class="purchase-actions d-flex" style="gap: 0.75rem;">
                         <button type="submit" name="action" value="add" class="btn btn-primary btn-lg flex-1">
                             🛒 Add to Cart
                         </button>
                         <button type="submit" name="action" value="buyNow" class="btn btn-secondary btn-lg flex-1">
                             ⚡ Buy Now
+                        </button>
+                        <button type="button"
+                                class="btn btn-outline btn-lg wishlist-toggle-btn"
+                                data-product-id="${product.id}"
+                                data-csrf="${sessionScope.csrfToken}"
+                                data-context-path="${pageContext.request.contextPath}"
+                                title="Save to Wishlist"
+                                style="font-size: 1.25rem; padding: 0 1rem;">
+                            🤍
                         </button>
                     </div>
                 </form>

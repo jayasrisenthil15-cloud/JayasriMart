@@ -5,6 +5,7 @@ import com.jayasrimart.dao.impl.OrderDaoImpl;
 import com.jayasrimart.dao.impl.ProductDaoImpl;
 import com.jayasrimart.dao.impl.ReviewDaoImpl;
 import com.jayasrimart.dao.impl.UserDaoImpl;
+import com.jayasrimart.dao.impl.WishlistDaoImpl;
 
 /**
  * Factory class for instantiating DAO implementations.
@@ -17,6 +18,7 @@ public final class DaoFactory {
     private static final ReviewDAO REVIEW_DAO = new ReviewDaoImpl();
     private static final CartDAO CART_DAO = new CartDaoImpl();
     private static final OrderDAO ORDER_DAO = new OrderDaoImpl();
+    private static final WishlistDAO WISHLIST_DAO = new WishlistDaoImpl();
 
     private DaoFactory() {
         // Prevent instantiation
@@ -65,5 +67,14 @@ public final class DaoFactory {
      */
     public static OrderDAO getOrderDAO() {
         return ORDER_DAO;
+    }
+
+    /**
+     * Obtains the singleton {@link WishlistDAO} implementation instance.
+     *
+     * @return the WishlistDAO instance
+     */
+    public static WishlistDAO getWishlistDAO() {
+        return WISHLIST_DAO;
     }
 }
